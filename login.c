@@ -84,8 +84,8 @@ int main(){
 
 		printf("Please type in your password: ");
 		fgets(uPass,256,stdin);
-		//uPass[strlen(uPass) -1] = 0;
-		strip(uPass);
+		uPass[strlen(uPass) -1] = 0;
+		//strip(uPass);
 
 		int accFile = open(uName,O_RDONLY);
 		if(accFile == -1){
@@ -98,7 +98,7 @@ int main(){
 				printf("You have successfully logged in! Please remember to be polite in the chatrooms!\n");
 			}
 			else{
-				//printf("SAVED PASS %sA\n",check);
+				//printf("SAVED PASS %s\n",check);
 				printf("You have entered a wrong password\n");
 			}
 		}
