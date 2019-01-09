@@ -76,7 +76,7 @@ int main(){
 	}
 
 	if(strcmp(choice,"Login") == 0 || strcmp(choice,"login") == 0){
-		char ch0eck[256];
+		char check[256];
 		printf("Please type in your username: ");
 		fgets(uName,256,stdin);
 		uName[strlen(uName) -1] = 0;
