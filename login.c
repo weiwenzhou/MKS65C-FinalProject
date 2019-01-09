@@ -38,10 +38,44 @@ int main(){
 
 	}
 	
+	if(strcmp(choice,"Login") == 0 || strcmp(choice,"login") == 0){
+		char check[256];
+		printf("Please type in your username: ");
+		fgets(uName,256,stdin);
+		uName[strlen(uName) -1] = 0;
+		strcat(uName,".txt");
 
+		printf("Please type in your password: ");
+		fgets(uPass,256,stdin);
+		uPass[strlen(uPass) -1] = 0;
 
+		int accFile = open(uName,O_RDONLY);
+		if(accFile == -1){
+			printf("You have entered a wrong username\n");
+		}
+		else{
+			read(accFile,check,100);
+			if(strcmp(check,uPass) == 0){
+				printf("You have successfully logged in! Please remember to be polite in the chatrooms!\n");
+			}
+			else{
+				printf("You have entered a wrong password\n");
+			}
+		}
+		
+		}
 
 	return 0;
 	}
-		 
+	
+
+
+
+
+
+
+
+
+
+	 
 	
