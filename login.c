@@ -57,7 +57,11 @@ int main(){
 
 		printf("Please type in your desired password: ");
 		fgets(uPass,256,stdin);
+	//	printf("HERE\n");
+	//	printf("length %ld\n", strlen(uPass));
+	//	printf("length [%s]\n", &uPass[strlen(uPass)-1]);
 		uPass[strlen(uPass) -1] = 0;
+	//	printf("length %ld\n", strlen(uPass));
 		strcat(uName,".txt");
 		//printf("Testing uName %s\n",uName);
 
@@ -93,12 +97,15 @@ int main(){
 		}
 		else{
 			//ERROR HERE IN THE BYTES
-			read(accFile,check,100);
+			FILE* fp = fopen(uName, "r");
+			//read(accFile,check,255);
+			read(accFile,check,getc(fp));
 			if(strcmp(check,uPass) == 0){
+				printf("SAVED PASS %s\n",check);
 				printf("You have successfully logged in! Please remember to be polite in the chatrooms!\n");
 			}
 			else{
-				//printf("SAVED PASS %s\n",check);
+				printf("SAVED PASS %s\n",check);
 				printf("You have entered a wrong password\n");
 			}
 		}
