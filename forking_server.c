@@ -4,10 +4,14 @@ void process(char *s);
 void subserver(int * clients, char * channelName, int from_client, int counter);
 void subchannel(char * channelName, char * portNum);
 
-int clientsConnect[10] = calloc (10, sizeof(int));
-
+int clientsConnect[10];
+int counter = 0;
 
 int main() {
+    int x;
+    for (x=0;x<10;x++) {
+        clientsConnect[x] = 0;
+    }
     int f = fork();
     if (f == 0) {
         subchannel("MICHAEL_SERVER","49152");
@@ -21,8 +25,6 @@ void subchannel(char * channelName, char * portNum) {
     int listen_socket;
     int f;
     listen_socket = server_setup(portNum);
-    
-    int counter = 0;
     while (1) {
 
     int client_socket = server_connect(listen_socket);
@@ -37,6 +39,7 @@ void subchannel(char * channelName, char * portNum) {
         
     } else {
       close(client_socket);
+    }
     }
 }
 

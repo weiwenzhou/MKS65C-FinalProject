@@ -95,27 +95,32 @@ int main(int argc, char **argv) {
     *strchr(port, '\n') = 0;
     
 
-  if (argc == 2)
-    server_socket = client_setup( argv[1],port);
-  else
-    server_socket = client_setup( TEST_IP,port );
+    if (argc == 2)
+        server_socket = client_setup( argv[1],port);
+    else
+        server_socket = client_setup( TEST_IP,port );
 
-	int rad = logging();
+    int rad = logging();
+    int f = fork();
+    if (f == 0) {
+        while (1) {
+            if(rad == 1){
 
-  while (1) {
-    if(rad == 1){
-    printf("enter data: ");
-    fgets(buffer, sizeof(buffer), stdin);
-    *strchr(buffer, '\n') = 0;
-    write(server_socket, buffer, sizeof(buffer));
-    read(server_socket, buffer, sizeof(buffer));
-    printf("received: [%s]\n", buffer);
-	}
-  
-   else {
-	rad = logging();
-  }
-}
+                printf("enter data: ");
+                fgets(buffer, sizeof(buffer), stdin);
+                *strchr(buffer, '\n') = 0;
+                write(server_socket, buffer, sizeof(buffer));
+
+                read(server_socket, buffer, sizeof(buffer));
+                printf("received: [%s]\n", buffer);
+            
+            } else {
+                rad = logging();
+            }   
+        }
+    } else {
+        
+    }
 }
 
 
