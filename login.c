@@ -42,7 +42,7 @@ char * strip(char * str){
 	return rStrip(lStrip(str));
 }
 
-int main(){
+int logging(){
 	char choice[256];
 	char uName[256];
 	char uPass[256];
@@ -71,6 +71,7 @@ int main(){
 		write(accFile,uPass,strlen(uPass));
 		if(accFile != -1){
 			printf("You have succesfully created your account!\n");
+			return 1;
 		}
 		else{
 			printf("OOPS! Something went wrong.");
@@ -103,6 +104,7 @@ int main(){
 			if(strcmp(check,uPass) == 0){
 				printf("SAVED PASS %s\n",check);
 				printf("You have successfully logged in! Please remember to be polite in the chatrooms!\n");
+				return 1;
 			}
 			else{
 				printf("SAVED PASS %s\n",check);
