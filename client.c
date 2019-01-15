@@ -93,22 +93,8 @@ int main(int argc, char **argv) {
     printf("Enter port# between 49152-65535: ");
     fgets(port, sizeof(port), stdin);
     *strchr(port, '\n') = 0;
-    if (argc == 2)
-        server_socket = client_setup( argv[1], port);
-    else
-        server_socket = client_setup( TEST_IP, port );
+    
 
-<<<<<<< HEAD
-    while (1) {
-        printf("enter data: ");
-        fgets(buffer, sizeof(buffer), stdin);
-        *strchr(buffer, '\n') = 0;
-        write(server_socket, buffer, sizeof(buffer));
-        read(server_socket, buffer, sizeof(buffer));
-        printf("received: [%s]\n", buffer);
-    }
-}
-=======
   if (argc == 2)
     server_socket = client_setup( argv[1]);
   else
@@ -143,4 +129,3 @@ int main(int argc, char **argv) {
 
 
 
->>>>>>> 189782c61b85e0f2b99dc913e58f512df35b0927
