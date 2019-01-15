@@ -7,10 +7,4 @@ For our project, we want to create something similar to an IRC(Internet Relay Ch
 
 **_Instructions:_**
 
-**_Development Log:_**
-
-**1/08/19:**     
-Michael- Wrote the basis for the login system     
-
-**1/09/19:**     
-Michael- Functioning login system involving the creation of files to save account names and passwords.  Started debugging to fix errors in the login system such as a white space in the password that caused program to break.
+Compile everything with "make".  Afterwards, run "./server" on one terminal and add clients with "./client" on other terminals.
