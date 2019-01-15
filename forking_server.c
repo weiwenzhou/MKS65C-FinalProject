@@ -4,7 +4,7 @@ void process(char *s);
 void subserver(int * clients, char * channelName, int from_client, int counter);
 void subchannel(char * channelName, char * portNum);
 
-int clientsConnect[10] = calloc (10, sizeof(int));
+int * clientsConnect = (int*)calloc(10,sizeof(int));
 
 
 int main() {
