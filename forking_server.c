@@ -1,14 +1,13 @@
 #include "networking.h"
 
 void process(char *s);
-void subserver(char * channelName, int from_client);
+void subserver(int * clients, char * channelName, int from_client, int counter);
 void subchannel(char * channelName, char * portNum);
 
+int clientsConnect[10] = calloc (10, sizeof(int));
+
+
 int main() {
-    int num;
-    for (num = 49152; num < 49154; num++) {
-        
-    }
     int f = fork();
     if (f == 0) {
         subchannel("MICHAEL_SERVER","49152");
@@ -22,27 +21,41 @@ void subchannel(char * channelName, char * portNum) {
     int listen_socket;
     int f;
     listen_socket = server_setup(portNum);
-
+    
+    int counter = 0;
     while (1) {
 
     int client_socket = server_connect(listen_socket);
+    //printf("clients[x] %d\n", client_socket);
+
     f = fork();
-    if (f == 0)
-      subserver(channelName, client_socket);
-    else
+    if (f == 0) {
+        clientsConnect[counter] = client_socket;
+        counter += 1;
+        //printf("clients[x] %d\n", client_socket);
+        subserver(clientsConnect, channelName, client_socket, counter);
+        
+    } else {
       close(client_socket);
     }
 }
 
 
-void subserver(char * channelName, int client_socket) {
+void subserver(int * clients, char * channelName, int client_socket, int counter) {
   char buffer[BUFFER_SIZE];
 
   while (read(client_socket, buffer, sizeof(buffer))) {
 
     printf("%s[subserver %d] received: [%s]\n", channelName, getpid(), buffer);
     process(buffer);
-    write(client_socket, buffer, sizeof(buffer));
+    int x;
+    for (x = 0; x<10; x++) {
+        if (clients[x] != 0) {
+            printf("clients[x] %d\n", clients[x]);
+            write(clients[x], buffer, sizeof(buffer));
+        //write(clients[x], test, sizeof(test));
+        }
+    }
   }//end read loop
   close(client_socket);
   exit(0);
