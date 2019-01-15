@@ -8,9 +8,9 @@ int main(int argc, char **argv) {
   fd_set read_fds;
 
   if (argc == 2)
-    server_socket = client_setup( argv[1]);
+    server_socket = client_setup( argv[1], PORT);
   else
-    server_socket = client_setup( TEST_IP );
+    server_socket = client_setup( TEST_IP, PORT );
 
   while (1) {
 

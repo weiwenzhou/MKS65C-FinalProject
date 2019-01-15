@@ -14,7 +14,7 @@ int main() {
   //set of file descriptors to read from
   fd_set read_fds;
 
-  listen_socket = server_setup();
+  listen_socket = server_setup(PORT);
 
   while (1) {
 
