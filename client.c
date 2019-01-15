@@ -96,9 +96,9 @@ int main(int argc, char **argv) {
     
 
   if (argc == 2)
-    server_socket = client_setup( argv[1]);
+    server_socket = client_setup( argv[1],port);
   else
-    server_socket = client_setup( TEST_IP );
+    server_socket = client_setup( TEST_IP,port );
 
 	int rad = logging();
 
