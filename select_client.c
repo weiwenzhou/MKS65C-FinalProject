@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
 
   while (1) {
 
-    printf("enter data: ");
+    //printf("enter data: ");
     //the above printf does not have \n
     //flush the buffer to immediately print
     fflush(stdout);
@@ -29,12 +29,16 @@ int main(int argc, char **argv) {
     select(server_socket + 1, &read_fds, NULL, NULL, NULL);
 
     if (FD_ISSET(STDIN_FILENO, &read_fds)) {
+    //printf("%s\n", "FIRST");
       fgets(buffer, sizeof(buffer), stdin);
+      //printf("%s\n", "SECOND");
       *strchr(buffer, '\n') = 0;
       write(server_socket, buffer, sizeof(buffer));
       read(server_socket, buffer, sizeof(buffer));
+      //printf("\e[1;1H\e[2J");
       printf("received: [%s]\n", buffer);
     }//end stdin select
+
 
     //currently the server is not set up to
     //send messages to all the clients, but
@@ -42,7 +46,7 @@ int main(int argc, char **argv) {
     if (FD_ISSET(server_socket, &read_fds)) {
       read(server_socket, buffer, sizeof(buffer));
       printf("[SERVER BROADCAST] [%s]\n", buffer);
-      printf("enter data: ");
+      //printf("enter data: ");
       //the above printf does not have \n
       //flush the buffer to immediately print
       fflush(stdout);
