@@ -33,7 +33,7 @@ int logging(){
 		strcat(uName,".txt");
 		//printf("Testing uName %s\n",uName);
 
-		int accFile = open(uName, O_APPEND | O_WRONLY | O_CREAT,0666);
+		int accFile = open(uName, O_WRONLY | O_CREAT,0666);
 		//printf("Testing uPass %s\n",uPass);
 
 		write(accFile,uPass,strlen(uPass));
@@ -66,9 +66,9 @@ int logging(){
 		}
 		else{
 			//ERROR HERE IN THE BYTES
-			FILE* fp = fopen(uName, "r");
+		//	FILE* fp = fopen(uName, "r");
 			//read(accFile,check,255);
-			read(accFile,check,getc(fp));
+			read(accFile,check,255);
 			if(strcmp(check,uPass) == 0){
 				printf("SAVED PASS %s\n",check);
 				printf("You have successfully logged in! Please remember to be polite in the chatrooms!\n");
