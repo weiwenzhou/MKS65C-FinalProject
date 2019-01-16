@@ -97,12 +97,12 @@ void subserver(int client_socket) {
 
 void send_to_all_clients(char * buffer, int size) {
     int i = 4;
-    while (i <= fd_max) {
+    while (i <= 10) {
         
-        if (FD_ISSET(i,&clients)) {
+        //if (FD_ISSET(i,&clients)) {
             printf("In fd_set %d\n", i);
             write(i,buffer,size);
-        }
+        //}
 		i = i + 1;
     }
 }
