@@ -1,26 +1,24 @@
 #include "networking.h"
 
 void process(char *s);
-void subserver(int client_socket);
-void send_to_all_clients(char * buffer, int size);
+void subserver(int from_client);
+void sendChat(char* s);
 
-int * clientsConnect;
-int counter = 0;
-fd_set clients;
-int fd_max;
+int subserver_count = 0;
+int connections[10];
+int p[2];
+
 int main() {
-    
+
   int listen_socket;
   int client_socket;
   int f;
-  int subserver_count = 0;
   char buffer[BUFFER_SIZE];
+
 
   //set of file descriptors to read from
   fd_set read_fds;
-  
-  clientsConnect = calloc(10, sizeof(int));
-  printf("%s\n", "ONE");
+
   listen_socket = server_setup(PORT);
 
   while (1) {
@@ -28,7 +26,6 @@ int main() {
     //select() modifies read_fds
     //we must reset it at each iteration
     FD_ZERO(&read_fds); //0 out fd set
-    FD_ZERO(&clients); //0 out fd set
     FD_SET(STDIN_FILENO, &read_fds); //add stdin to fd set
     FD_SET(listen_socket, &read_fds); //add socket to fd set
 
@@ -37,20 +34,25 @@ int main() {
 
     //if listen_socket triggered select
     if (FD_ISSET(listen_socket, &read_fds)) {
-        printf("pid %d\n", getpid());
      client_socket = server_connect(listen_socket);
-     clientsConnect[counter] = client_socket;
-     counter += 1;
-     f = fork();
-     if (f == 0) {
-        FD_SET(client_socket, &clients); // Add clients if subserver starts
-        fd_max = client_socket; // Set fd_max to the largest fd
 
-        subserver(client_socket);
-     } else {
-       subserver_count++;
+     if (pipe(p) < 0)
+	     exit(1);
+
+     f = fork();
+     if (f == 0)
+       subserver(client_socket);
+     else {
+
+      printf("[server] subserver count: %d\n", subserver_count);
+       connections[subserver_count++] = client_socket;
+
+       while(read(p[0],buffer, sizeof(buffer)) > 0)
+		sendChat(buffer);
+
        //close(client_socket);
      }
+
     }//end listen_socket select
 
     //if stdin triggered select
@@ -62,6 +64,15 @@ int main() {
   }
 }
 
+void sendChat(char* s)
+{
+	for (int i= 0; i< subserver_count; i++)
+	{
+		write(connections[i], s, sizeof(s));
+        }
+
+}
+
 void subserver(int client_socket) {
   char buffer[BUFFER_SIZE];
 
@@ -71,40 +82,20 @@ void subserver(int client_socket) {
 
   while (read(client_socket, buffer, sizeof(buffer))) {
 
-        printf("[subserver %d] received: [%s]\n", getpid(), buffer);
-        //process(buffer);
-        send_to_all_clients(buffer, sizeof(buffer));
-      
-        /*
-        int i = 0;
-        while (i < 10) {
-        //while (i < *counter) {
-        printf("FD %d======%d\n", clientsConnect[i], counter);
-        //if (FD_ISSET(i, clients)) {
-        //    printf("FD %d %d\n", i, *fd_max);
-            write(clientsConnect[i], buffer, sizeof(buffer));
-        i++;
-        }
-        printf("PASS\n");
-        */
-      
-        //write(client_socket, buffer, sizeof(buffer));
-      
-    }//end read loop
-    close(client_socket);
-    exit(0);
-}
+    printf("[subserver %d] received: [%s]\n", getpid(), buffer);
+    //process(buffer);
+    //write(client_socket, buffer, sizeof(buffer));
+     for (int i= 0; i< subserver_count; i++)
+     {
+	     	printf("[subserver %d] servercount: [%d]\n",getpid(),i);
+		process(buffer);
+                write(connections[i], buffer, sizeof(buffer));
+		write(p[1], buffer, sizeof(buffer));
+     }
 
-void send_to_all_clients(char * buffer, int size) {
-    int i = 4;
-    while (i <= fd_max) {
-        
-        if (FD_ISSET(i,&clients)) {
-            printf("In fd_set %d\n", i);
-            write(i,buffer,size);
-        }
-		i = i + 1;
-    }
+  }//end read loop
+  close(client_socket);
+  exit(0);
 }
 
 void process(char * s) {
