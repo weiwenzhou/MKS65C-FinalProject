@@ -7,4 +7,4 @@ For our project, we want to create something similar to an IRC(Internet Relay Ch
 
 **_Instructions:_**
 
-Compile everything with "make".  Afterwards, run "./server" on one terminal and add clients with "./client" on other terminals.
+Compile everything with "make select".  Afterwards, run "./server" on one terminal and add clients with "./client" on other terminals.  On the clients, either type "create" to create an account or type "login" to log back into an existing account.
