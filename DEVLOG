@@ -1,0 +1,35 @@
+Jan 8 2019-
+  Wei Wen: Added basic files and file headers into the repository as a backbone
+  Michael: Added basic libraries into the login file to begin writing the account creation process
+  
+Jan 9 2019-
+  Michael: Added in a mostly working logging in system where a user is able to create an account and/or log into their accounts.
+  Michael & Wei Wen: Worked together on part of the logging in code during class
+  
+Jan 10 2019-
+  Michael & Wei Wen: Discussed future steps and began searching for bugs in what we had so far
+  (Found that sometimes, a password that the user entered would be duplicated in the storage file)
+  
+Jan 11 2019-
+  Michael: Found more issues with some spaces causing errors in password verification
+  Wei Wen: Began to look and analyze DW's socket code
+  
+Jan 13 2019-
+  Wei Wen: Further analysis of socket code
+  
+Jan 14 2019-
+  Michael: Copy and pasted all the code from DW's socket repoistory over.  Also realized that a textfile with my last, first name 
+  was never added and resolved that....
+  
+Jan 15 2019-
+  Wei Wen: Began coding to allow communication between multiple clients connected to the same server
+  Michael: Implemented the log in system with select_client so that user would be prompted for their account information before any 
+  connection with server is made.  Made some shortcuts such as creating an account would automatically log you in.  Began working on network
+  communication between multiple clients as well.
+  
+Jan 16 2019-
+  Wei Wen: Got communication between multiple clients to work.
+  Michael: Attempted this with threads to make code more efficient
+  
+Jan 17 2019-
+  Wei Wen: A bit of coloring for different clients texts
