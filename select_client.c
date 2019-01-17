@@ -192,17 +192,5 @@ void channel(char * ip, char * portNum) {
 		rad = logging();
 	}
     }//end loop
-<<<<<<< HEAD
+
 }
-
-
-
-
-
-
-
-
-
-=======
-}
->>>>>>> 6df4c1528dc094bad4463c456179f00e6eda7bbc
