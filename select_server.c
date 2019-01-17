@@ -1,22 +1,51 @@
 #include "networking.h"
 
 void process(char *s);
-void subserver(int client_socket);
-void send_to_all_clients(char * buffer, int size);
+void channel(char * portNum);
+char ** parse_args(char * line, char * split);
 
+char ** parse_args(char * line, char * split) {
+    line = strsep(&line, "\n");
+    char ** args = malloc(sizeof(char *) * 10);
+    int x = 0;
+    while (line) {
+        args[x] = strsep( &line, split);
+        x += 1;
+    }
+    args[x] = NULL;
+    return args;
+}
 
+int f; // fork pid
+//char* validPorts[256];
+//int channelCount = 0;
 
+static void sighandler(int signo) {
+    if (signo == SIGINT) {
+        char ** myargs = parse_args("killall -9 server", " ");
+        execvp(myargs[0], myargs);
+    }
+}
 
 
 int main() {
+    channel(PORT);
+}
 
+void channel(char * portNum) {
+    signal(SIGINT, sighandler);
+    
+    // ADD port to valid Ports
+    //validPorts[channelCount] = portNum;
+    //channelCount += 1;
+    
     int listen_socket;
     int client_socket;
-    int f;
+
     int subserver_count = 0;
     char buffer[BUFFER_SIZE];
     
-    int max_clients = 10; // max # of clients to handle
+    int max_clients = 16; // max # of clients to handle
     int clientsConnected[max_clients]; // array of client sockets
     int fd_max; // the value of the largest fd
     int i; // for loops
@@ -30,7 +59,7 @@ int main() {
     }
 
     // create the server socket
-    listen_socket = server_setup(PORT);
+    listen_socket = server_setup(portNum);
     fd_max = listen_socket; // largest file descriptor
 
     while (1) {
@@ -93,7 +122,7 @@ int main() {
                 if (!clientsConnected[i]) { // when clients[x] is 0
                     // add client_socket to clientsConnected
                     clientsConnected[i] = client_socket; 
-                    printf("Client_socket %d has connected", client_socket);
+                    printf("Client_socket %d has connected to port %s\n", client_socket, portNum);
                     
                     //printf("Am I adding?\n");
                     
@@ -113,8 +142,45 @@ int main() {
                 if (read(clientsConnected[i], buffer, sizeof(buffer))) {
                     // reads something here
                     
+                    // Want to create a channel
+                    if (strstr(buffer, "#create ") ){
+                        char * newPort = parse_args(buffer, " ")[2];
+                        //strcat(buffer, "Created channel at port ");
+                        strcat(buffer, newPort);
+	                    f = fork();
+                        if (f == 0) {
+                            channel(newPort);
+                        } 
+                    }
+                    
+                    // Want to join a different channel
+                    if (strstr(buffer, "#join ") ){
+                        close(clientsConnected[i]);
+                        clientsConnected[i] = 0;
+                        // Send to all clients
+                        for (i =0; i < max_clients; i++) {
+                            if (clientsConnected[i] > 0) {
+                                write(clientsConnected[i], buffer, sizeof(buffer));
+                            }
+                        }
+                    } 
+                    /*
+                    // Check channels
+                    if (strstr(buffer, "#channels") ){
+                        char channelBuffer[BUFFER_SIZE];
+                        strcpy(channelBuffer, "Channels available: ");
+                        write(clientsConnected[i], channelBuffer, sizeof(channelBuffer));
+                        int i;
+                        for (i = 0; i < channelCount; i++) {
+                            printf("%s\n" validPorts[channelCount]);
+                            strcpy(channelBuffer, validPorts[channelCount]);
+                            write(clientsConnected[i], channelBuffer, sizeof(channelBuffer));
+                        }
+                    }
+                    
+                    */
                     //printf("Am I touching here?\n");
-                    //printf("[subserver %d] received: [%s]\n", getpid(), buffer);
+                    printf("[subserver %d] received: [%s]\n", getpid(), buffer);
 
                     //process(buffer);
                     //write(clientsConnected[i], buffer, sizeof(buffer));
@@ -158,52 +224,7 @@ int main() {
           fgets(buffer, sizeof(buffer), stdin);
           printf("[server] subserver count: %d\n", subserver_count);
         }//end stdin select
-    } // end of while loop
-}
-
-void subserver(int client_socket) {
-  char buffer[BUFFER_SIZE];
-
-  //for testing client select statement
-  strncpy(buffer, "hello client", sizeof(buffer));
-  write(client_socket, buffer, sizeof(buffer));
-
-  while (read(client_socket, buffer, sizeof(buffer))) {
-
-       // printf("[subserver %d] received: [%s]\n", getpid(), buffer);
-        //process(buffer);
-        send_to_all_clients(buffer, sizeof(buffer));
-
-        /*
-        int i = 0;
-        while (i < 10) {
-        //while (i < *counter) {
-        printf("FD %d======%d\n", clientsConnect[i], counter);
-        //if (FD_ISSET(i, clients)) {
-        //    printf("FD %d %d\n", i, *fd_max);
-            write(clientsConnect[i], buffer, sizeof(buffer));
-        i++;
-        }
-        printf("PASS\n");
-        */
-
-        //write(client_socket, buffer, sizeof(buffer));
-
-    }//end read loop
-    close(client_socket);
-    exit(0);
-}
-
-void send_to_all_clients(char * buffer, int size) {
-    int i = 4;
-    while (i <= 10) {
-
-        //if (FD_ISSET(i,&clients)) {
-            printf("In fd_set %d\n", i);
-            write(i,buffer,size);
-        //}
-		i = i + 1;
-    }
+    } // end of while loop    
 }
 
 void process(char * s) {

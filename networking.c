@@ -20,7 +20,7 @@ int server_setup(char * portNum) {
   //create the socket
   sd = socket( AF_INET, SOCK_STREAM, 0 );
   error_check( sd, "server socket" );
-  printf("[server] socket created\n");
+  printf("[server%s] socket created\n", portNum);
 
   //setup structs for getaddrinfo
   struct addrinfo * hints, * results;
@@ -33,12 +33,12 @@ int server_setup(char * portNum) {
   //bind the socket to address and port
   i = bind( sd, results->ai_addr, results->ai_addrlen );
   error_check( i, "server bind" );
-  printf("[server] socket bound\n");
+  printf("[server%s] socket bound\n", portNum);
 
   //set socket to listen state
   i = listen(sd, 10);
   error_check( i, "server listen" );
-  printf("[server] socket in listen state\n");
+  printf("[server%s] socket in listen state\n",portNum);
 
   //free the structs used by getaddrinfo
   free(hints);

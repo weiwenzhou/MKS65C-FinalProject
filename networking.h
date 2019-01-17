@@ -10,6 +10,9 @@
 #include <errno.h>
 #include <sys/ipc.h> 
 #include <sys/shm.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <ctype.h>
 
 #ifndef NETWORKING_H
 #define NETWORKING_H

@@ -1,13 +1,24 @@
 #include "networking.h"
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <ctype.h>
 
+int loggin();
+void channel(char * ip, char * portNum);
+char ** parse_args(char * line, char * split);
+
+char ** parse_args(char * line, char * split) {
+    line = strsep(&line, "\n");
+    char ** args = malloc(sizeof(char *) * 10);
+    int x = 0;
+    while (line) {
+        args[x] = strsep( &line, split);
+        x += 1;
+    }
+    args[x] = NULL;
+    return args;
+}
+
+// Login
 char clientName[256];
-
+int rad;
 
 int logging(){
 	char choice[256];
@@ -89,21 +100,27 @@ int logging(){
 
 
 int main(int argc, char **argv) {
+    if (argc == 2)
+        channel( argv[1], PORT);
+    else
+        channel( TEST_IP, PORT );
+}
 
+
+void channel(char * ip, char * portNum) {
     int server_socket;
     char buffer[BUFFER_SIZE];
-
+    int f;
+    
     fd_set read_fds;
 
-    if (argc == 2)
-        server_socket = client_setup( argv[1], PORT);
-    else
-        server_socket = client_setup( TEST_IP, PORT );
+    server_socket = client_setup( ip, portNum);
 	
     //printf("Did i get here\n");
     printf("\e[1;1H\e[2J"); // clear the screen on boot
 
-	int rad = logging();
+    
+
     while (1) {
 	if(rad == 1){
 
@@ -127,6 +144,22 @@ int main(int argc, char **argv) {
             printf("\e[1m\e[92m%s: \e[21m\e[39m", clientName);
             fgets(buffer, sizeof(buffer), stdin);
             *strchr(buffer, '\n') = 0;
+            
+             if (strstr(buffer, "#join ") ){
+                char tempBuff[BUFFER_SIZE];
+                // copy buffer
+                strcpy(tempBuff, buffer);
+
+                char * newPort = parse_args(tempBuff, " ")[1];
+                f = fork();
+                if (f == 0) {
+                    exit(0);                      
+                } else {
+                    channel(ip, newPort); 
+                } 
+            }
+            
+            
             
             strcpy(msg, clientName); // Add clientName
             strcat(msg, ": "); // Add space
@@ -160,9 +193,6 @@ int main(int argc, char **argv) {
 	}
     }//end loop
 }
-
-
-
 
 
 
