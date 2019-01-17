@@ -2,55 +2,56 @@
 
 int main(int argc, char **argv) {
 
-  int server_socket;
-  char buffer[BUFFER_SIZE];
+    int server_socket;
+    char buffer[BUFFER_SIZE];
 
-  fd_set read_fds;
+    fd_set read_fds;
 
-  if (argc == 2)
-    server_socket = client_setup( argv[1], PORT);
-  else
-    server_socket = client_setup( TEST_IP, PORT );
+    if (argc == 2)
+        server_socket = client_setup( argv[1], PORT);
+    else
+        server_socket = client_setup( TEST_IP, PORT );
+    //printf("Did i get here\n");
+    while (1) {
 
-  while (1) {
+        //printf("enter data: ");
+        //the above printf does not have \n
+        //flush the buffer to immediately print
+        fflush(stdout);
 
-    //printf("enter data: ");
-    //the above printf does not have \n
-    //flush the buffer to immediately print
-    fflush(stdout);
+        //select() modifies read_fds
+        //we must reset it at each iteration
+        FD_ZERO(&read_fds);
+        FD_SET(STDIN_FILENO, &read_fds); //add stdin to fd set
+        FD_SET(server_socket, &read_fds); //add socket to fd set
 
-    //select() modifies read_fds
-    //we must reset it at each iteration
-    FD_ZERO(&read_fds);
-    FD_SET(STDIN_FILENO, &read_fds); //add stdin to fd set
-    FD_SET(server_socket, &read_fds); //add socket to fd set
+        //select will block until either fd is ready
+        select(server_socket + 1, &read_fds, NULL, NULL, NULL);
 
-    //select will block until either fd is ready
-    select(server_socket + 1, &read_fds, NULL, NULL, NULL);
-
-    if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-    //printf("%s\n", "FIRST");
-      fgets(buffer, sizeof(buffer), stdin);
-      //printf("%s\n", "SECOND");
-      *strchr(buffer, '\n') = 0;
-      write(server_socket, buffer, sizeof(buffer));
-      read(server_socket, buffer, sizeof(buffer));
-      //printf("\e[1;1H\e[2J");
-      printf("received: [%s]\n", buffer);
-    }//end stdin select
+        if (FD_ISSET(STDIN_FILENO, &read_fds)) {
+            //printf("%s\n", "FIRST");
+            fgets(buffer, sizeof(buffer), stdin);
+            //printf("%s\n", "SECOND");
+            *strchr(buffer, '\n') = 0;
+            write(server_socket, buffer, sizeof(buffer));
+            read(server_socket, buffer, sizeof(buffer));
+            //printf("\e[1;1H\e[2J");
+            printf("received: [%s]\n", buffer);
+        }//end stdin select
 
 
-    //currently the server is not set up to
-    //send messages to all the clients, but
-    //this would allow for broadcast messages
-    if (FD_ISSET(server_socket, &read_fds)) {
-      read(server_socket, buffer, sizeof(buffer));
-      printf("[SERVER BROADCAST] [%s]\n", buffer);
-      //printf("enter data: ");
-      //the above printf does not have \n
-      //flush the buffer to immediately print
-      fflush(stdout);
-    }//end socket select
+        //currently the server is not set up to
+        //send messages to all the clients, but
+        //this would allow for broadcast messages
+        if (FD_ISSET(server_socket, &read_fds)) {
+            read(server_socket, buffer, sizeof(buffer));
+            printf("[SERVER BROADCAST] [%s]\n", buffer);
+            
+            //printf("enter data: ");
+            //the above printf does not have \n
+            //flush the buffer to immediately print
+            fflush(stdout);
+        }//end socket select
 
-  }//end loop
+    }//end loop
 }
