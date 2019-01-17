@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
     else
         server_socket = client_setup( TEST_IP, PORT );
     //printf("Did i get here\n");
+    printf("\e[1;1H\e[2J"); // clear the screen on boot
     while (1) {
 
         //printf("enter data: ");
@@ -36,7 +37,7 @@ int main(int argc, char **argv) {
             write(server_socket, buffer, sizeof(buffer));
             read(server_socket, buffer, sizeof(buffer));
             //printf("\e[1;1H\e[2J");
-            printf("received: [%s]\n", buffer);
+            //printf("received: [%s]\n", buffer);
         }//end stdin select
 
 
@@ -44,7 +45,7 @@ int main(int argc, char **argv) {
         //send messages to all the clients, but
         //this would allow for broadcast messages
         if (FD_ISSET(server_socket, &read_fds)) {
-            read(server_socket, buffer, sizeof(buffer));
+            read(server_socket, buffer, sizeof(buffer));            
             printf("[SERVER BROADCAST] [%s]\n", buffer);
             
             //printf("enter data: ");
