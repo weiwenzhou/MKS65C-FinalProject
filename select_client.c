@@ -6,14 +6,14 @@
 #include <unistd.h>
 #include <ctype.h>
 
-
-
+char clientName[256];
 
 
 int logging(){
 	char choice[256];
-	char uName[256];
-	char uPass[256];
+    char uName[256];
+    char uPass[256];
+    
 	printf("Hello! Welcome to WeiChat!  Would you like to login or create an account?\n(Login/Create)\n");
 	fgets(choice,256,stdin);
 	choice[strlen(choice) -1] = 0;
@@ -53,6 +53,7 @@ int logging(){
 		printf("Please type in your username: ");
 		fgets(uName,256,stdin);
 		uName[strlen(uName) -1] = 0;
+        strcpy(clientName, uName);
 		strcat(uName,".txt");
 
 		printf("Please type in your password: ");
@@ -71,7 +72,8 @@ int logging(){
 			read(accFile,check,255);
 			if(strcmp(check,uPass) == 0){
 				//printf("SAVED PASS %s\n",check);
-				printf("You have successfully logged in! Please remember to be polite in the chatrooms!\n");
+                printf("\e[1;1H\e[2J"); // clear the screen on login success
+				printf("You have successfully logged in!\n Please remember to be polite in the chatrooms!\n");
 				return 1;
 			}
 			else{
@@ -120,11 +122,17 @@ int main(int argc, char **argv) {
         select(server_socket + 1, &read_fds, NULL, NULL, NULL);
 
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-            //printf("%s\n", "FIRST");
+            char msg[BUFFER_SIZE];
+            
+            printf("\e[1m\e[92m%s: \e[21m\e[39m", clientName);
             fgets(buffer, sizeof(buffer), stdin);
-            //printf("%s\n", "SECOND");
             *strchr(buffer, '\n') = 0;
-            write(server_socket, buffer, sizeof(buffer));
+            
+            strcpy(msg, clientName); // Add clientName
+            strcat(msg, ": "); // Add space
+            strcat(msg, buffer); // Add buffer
+            
+            write(server_socket, msg, sizeof(msg));
             read(server_socket, buffer, sizeof(buffer));
             //printf("\e[1;1H\e[2J");
             //printf("received: [%s]\n", buffer);
@@ -136,7 +144,10 @@ int main(int argc, char **argv) {
         //this would allow for broadcast messages
         if (FD_ISSET(server_socket, &read_fds)) {
             read(server_socket, buffer, sizeof(buffer));            
-            printf("[SERVER BROADCAST] [%s]\n", buffer);
+            
+            printf("\r%s\n\e[1m\e[92m%s: \e[21m\e[39m", buffer, clientName);
+            
+            //printf("[SERVER BROADCAST] [%s]\n", buffer);
             
             //printf("enter data: ");
             //the above printf does not have \n

@@ -79,7 +79,7 @@ int main() {
             client_socket = server_connect(listen_socket);
             
             //for testing client select statement
-            strncpy(buffer, "hello client", sizeof(buffer));
+            strncpy(buffer, "[SERVER BROADCAST] [hello client]", sizeof(buffer));
             write(client_socket, buffer, sizeof(buffer));
 
             //subserver_count++;
@@ -93,6 +93,7 @@ int main() {
                 if (!clientsConnected[i]) { // when clients[x] is 0
                     // add client_socket to clientsConnected
                     clientsConnected[i] = client_socket; 
+                    printf("Client_socket %d has connected", client_socket);
                     
                     //printf("Am I adding?\n");
                     
@@ -119,7 +120,9 @@ int main() {
                     //write(clientsConnected[i], buffer, sizeof(buffer));
                     // Send to all clients
                     for (i =0; i < max_clients; i++) {
-                        write(clientsConnected[i], buffer, sizeof(buffer));
+                        if (clientsConnected[i] > 0) {
+                            write(clientsConnected[i], buffer, sizeof(buffer));
+                        }
                     }
                     
                     //send_to_all_clients(buffer, sizeof(buffer));
