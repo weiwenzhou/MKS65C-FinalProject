@@ -34,7 +34,8 @@ int main() {
     fd_max = listen_socket; // largest file descriptor
 
     while (1) {
-        printf("I am at the top\n");
+        //printf("I am at the top\n");
+        
         //select() modifies read_fds
         //we must reset it at each iteration
         FD_ZERO(&read_fds); //0 out fd set
@@ -45,11 +46,13 @@ int main() {
         
         // add client sockets to the fd set
         for (i = 0; i < max_clients; i++) {
+            //printf("What is occuring? i:%d == fd:%d\n", i, clientsConnected[i]);
+            
             // if not 0 add to fd set
-            printf("What is occuring? i:%d == fd:%d\n", i, clientsConnected[i]);
             if (clientsConnected[i] > 0) {
                 FD_SET(clientsConnected[i], &read_fds);
-                printf("Added %d to fd_set\n", clientsConnected[i]);
+                
+                //printf("Added %d to fd_set\n", clientsConnected[i]);
             }
             
             // Ensure fd_max remains the larget fd
@@ -58,37 +61,42 @@ int main() {
             }
         }
 
-        printf("I am waiting here instead?\n");
+        //printf("I am waiting here instead?\n");
+        
         //select will block until either fd is ready 
         // 1st argument = total number of to look at
         // from (0 to fd_max+1)
         select(fd_max + 1, &read_fds, NULL, NULL, NULL);
-        printf("I am waiting\n");
+        //printf("I am waiting\n");
+        
         //if listen_socket triggered select
         // someone connects to the server
         if (FD_ISSET(listen_socket, &read_fds)) {
             
-            printf("I hear something\n");
+            //printf("I hear something\n");
 
             // create the new socket to communicate with client
             client_socket = server_connect(listen_socket);
             
             //for testing client select statement
-            strncpy(buffer, "hello client", sizeof(buffer));
+            strncpy(buffer, "[SERVER BROADCAST] [hello client]", sizeof(buffer));
             write(client_socket, buffer, sizeof(buffer));
 
             //subserver_count++;
             //FD_SET(client_socket, &clients); // Add clients if subserver starts
             
-            printf("I am here\n");
+            //printf("I am here\n");
 
             // Add the client socket to collection of sockets
             for (i = 0; i < max_clients; i++) {
-                printf("Do I come here?\n");
+                //printf("Do I come here?\n");
                 if (!clientsConnected[i]) { // when clients[x] is 0
                     // add client_socket to clientsConnected
                     clientsConnected[i] = client_socket; 
-                    printf("Am I adding?\n");
+                    printf("Client_socket %d has connected", client_socket);
+                    
+                    //printf("Am I adding?\n");
+                    
                     break;
                 }
             }
@@ -97,20 +105,24 @@ int main() {
 
         } 
       
-        printf("I am here2\n");
+        //printf("I am here2\n");
         // listen to clients here
         for (i = 0; i < max_clients; i++) {
-            printf("Coming through %d?\n", i);
+            //printf("Coming through %d?\n", i);
             if (FD_ISSET(clientsConnected[i], &read_fds)) {
                 if (read(clientsConnected[i], buffer, sizeof(buffer))) {
                     // reads something here
-                 //   printf("Am I touching here?\n");
-                  //  printf("[subserver %d] received: [%s]\n", getpid(), buffer);
+                    
+                    //printf("Am I touching here?\n");
+                    //printf("[subserver %d] received: [%s]\n", getpid(), buffer);
+
                     //process(buffer);
                     //write(clientsConnected[i], buffer, sizeof(buffer));
                     // Send to all clients
                     for (i =0; i < max_clients; i++) {
-                        write(clientsConnected[i], buffer, sizeof(buffer));
+                        if (clientsConnected[i] > 0) {
+                            write(clientsConnected[i], buffer, sizeof(buffer));
+                        }
                     }
                     
                     //send_to_all_clients(buffer, sizeof(buffer));
@@ -121,7 +133,7 @@ int main() {
                 }
             }
         }
-        printf("I am here3\n");
+        //printf("I am here3\n");
         //printf("HERE\n");
         //close(listen_socket);
         //listen_socket = server_setup(PORT);
