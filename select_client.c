@@ -6,24 +6,14 @@
 #include <unistd.h>
 #include <ctype.h>
 
-<<<<<<< HEAD
-char uName[256];
-char tempName[256];
-=======
 char clientName[256];
->>>>>>> be53daa6efdedbb06ea732bd0be7747ee2bf7f66
 
 
 int logging(){
 	char choice[256];
-<<<<<<< HEAD
-	//char uName[256];
-	char uPass[256];
-=======
     char uName[256];
     char uPass[256];
     
->>>>>>> be53daa6efdedbb06ea732bd0be7747ee2bf7f66
 	printf("Hello! Welcome to WeiChat!  Would you like to login or create an account?\n(Login/Create)\n");
 	fgets(choice,256,stdin);
 	choice[strlen(choice) -1] = 0;
@@ -32,9 +22,6 @@ int logging(){
 		printf("Please type in your desired username: ");
 		fgets(uName,256,stdin);
 		uName[strlen(uName) -1] = 0;
-		strcpy(tempName,uName);
-		strcat(tempName,"---");
-
 
 		printf("Please type in your desired password: ");
 		fgets(uPass,256,stdin);
@@ -66,13 +53,7 @@ int logging(){
 		printf("Please type in your username: ");
 		fgets(uName,256,stdin);
 		uName[strlen(uName) -1] = 0;
-<<<<<<< HEAD
-		strcpy(tempName,uName);
-		strcat(tempName,"---");
-
-=======
         strcpy(clientName, uName);
->>>>>>> be53daa6efdedbb06ea732bd0be7747ee2bf7f66
 		strcat(uName,".txt");
 
 		printf("Please type in your password: ");
@@ -119,20 +100,12 @@ int main(int argc, char **argv) {
     else
         server_socket = client_setup( TEST_IP, PORT );
 	
-<<<<<<< HEAD
-    	int rad = logging();
-=======
     //printf("Did i get here\n");
     printf("\e[1;1H\e[2J"); // clear the screen on boot
 
 	int rad = logging();
->>>>>>> be53daa6efdedbb06ea732bd0be7747ee2bf7f66
     while (1) {
 	if(rad == 1){
-
-
-	//printf("%s\n",uName);
-        //printf("dad");
 
         //printf("enter data: ");
         //the above printf does not have \n
@@ -149,32 +122,17 @@ int main(int argc, char **argv) {
         select(server_socket + 1, &read_fds, NULL, NULL, NULL);
 
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-<<<<<<< HEAD
-            //printf("%s\n", "FIRST");
-	    printf("%s",tempName);
-=======
             char msg[BUFFER_SIZE];
             
             printf("\e[1m\e[92m%s: \e[21m\e[39m", clientName);
->>>>>>> be53daa6efdedbb06ea732bd0be7747ee2bf7f66
             fgets(buffer, sizeof(buffer), stdin);
             *strchr(buffer, '\n') = 0;
-<<<<<<< HEAD
-		
-	     strcat(tempName,buffer);
-	     strcpy(buffer,tempName);
-		
-            write(server_socket, buffer, sizeof(buffer));
-	    //strcat(uName, buffer);
-
-=======
             
             strcpy(msg, clientName); // Add clientName
             strcat(msg, ": "); // Add space
             strcat(msg, buffer); // Add buffer
             
             write(server_socket, msg, sizeof(msg));
->>>>>>> be53daa6efdedbb06ea732bd0be7747ee2bf7f66
             read(server_socket, buffer, sizeof(buffer));
             //printf("\e[1;1H\e[2J");
             //printf("received: [%s]\n", buffer);
@@ -185,22 +143,12 @@ int main(int argc, char **argv) {
         //send messages to all the clients, but
         //this would allow for broadcast messages
         if (FD_ISSET(server_socket, &read_fds)) {
-<<<<<<< HEAD
-            read(server_socket, buffer, sizeof(buffer));
-		//strcat(uName, buffer);
-
-            //printf("[SERVER BROADCAST] [%s]\n", buffer);
-             
-		printf("%s\n", buffer);
-
-=======
             read(server_socket, buffer, sizeof(buffer));            
             
             printf("\r%s\n\e[1m\e[92m%s: \e[21m\e[39m", buffer, clientName);
             
             //printf("[SERVER BROADCAST] [%s]\n", buffer);
             
->>>>>>> be53daa6efdedbb06ea732bd0be7747ee2bf7f66
             //printf("enter data: ");
             //the above printf does not have \n
             //flush the buffer to immediately print
@@ -212,15 +160,3 @@ int main(int argc, char **argv) {
 	}
     }//end loop
 }
-
-
-
-
-
-
-
-
-
-
-
-
