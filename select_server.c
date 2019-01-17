@@ -114,7 +114,7 @@ int main() {
                     
                     //printf("Am I touching here?\n");
                     //printf("[subserver %d] received: [%s]\n", getpid(), buffer);
-                    
+
                     //process(buffer);
                     //write(clientsConnected[i], buffer, sizeof(buffer));
                     // Send to all clients
@@ -167,7 +167,7 @@ void subserver(int client_socket) {
 
   while (read(client_socket, buffer, sizeof(buffer))) {
 
-        printf("[subserver %d] received: [%s]\n", getpid(), buffer);
+       // printf("[subserver %d] received: [%s]\n", getpid(), buffer);
         //process(buffer);
         send_to_all_clients(buffer, sizeof(buffer));
 
