@@ -32,6 +32,8 @@ int logging(){
 	if(strcmp(choice,"Create") == 0 || strcmp(choice,"create") == 0){
 		printf("Please type in your desired username: ");
 		fgets(uName,256,stdin);
+    strcpy(clientName, uName);
+    clientName[strlen(clientName) - 1]= 0;
 		uName[strlen(uName) -1] = 0;
 
 		printf("Please type in your desired password: ");
